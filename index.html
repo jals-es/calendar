@@ -4,285 +4,539 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calendario Anual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --accent-blue: #3B82F6;
+    --accent-green: #22C55E;
+    --accent-orange: #F59E0B;
+    --accent-red: #E42313;
+    --bg-card: #FFFFFF;
+    --bg-header: #FFFFFF;
+    --bg-holiday: #FEF2F2;
+    --bg-page: #F5F5F7;
+    --bg-today: #EFF6FF;
+    --bg-vacation: #F0FDF4;
+    --bg-weekend: #F5F5F5;
+    --bg-working: #FFFFFF;
+    --border: #E8E8E8;
+    --text-muted: #B0B0B0;
+    --text-primary: #0D0D0D;
+    --text-secondary: #7A7A7A;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f0f2f5;
-    color: #1a1a2e;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
     min-height: 100vh;
   }
+
+  /* ===== HEADER ===== */
   header {
-    background: #1a1a2e;
-    color: #fff;
-    padding: 1rem 2rem;
+    background: var(--bg-header);
+    height: 72px;
+    padding: 0 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.3);
   }
-  header h1 { font-size: 1.4rem; font-weight: 600; }
-  .controls { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
-  .controls label { font-size: .85rem; }
-  .controls select, .controls button {
-    padding: .4rem .75rem;
-    border-radius: 6px;
-    border: none;
-    font-size: .9rem;
-    cursor: pointer;
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
-  .controls select { background: #fff; color: #1a1a2e; }
-  .btn-reset {
-    background: #e74c3c;
-    color: #fff;
+  .header-left svg { color: var(--accent-red); }
+  .header-left h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
     font-weight: 600;
-    transition: background .2s;
+    color: var(--text-primary);
   }
-  .btn-reset:hover { background: #c0392b; }
-
-  .legend {
-    display: flex;
-    gap: 1.25rem;
-    padding: .75rem 2rem;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    flex-wrap: wrap;
-    align-items: center;
-    font-size: .85rem;
-  }
-  .legend-item { display: flex; align-items: center; gap: .35rem; }
-  .legend-swatch {
-    width: 16px; height: 16px; border-radius: 4px; border: 1px solid #ccc;
-  }
-
-  .summary {
-    padding: 1rem 2rem;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    font-size: .9rem;
-    align-items: center;
-  }
-  .summary-block { display: flex; flex-direction: column; gap: .2rem; }
-  .summary-block strong { font-size: 1.5rem; }
-  .summary-block span { color: #666; font-size: .8rem; }
-
-  .vacation-tracker {
-    margin-left: auto;
+  .header-center {
     display: flex;
     align-items: center;
-    gap: .75rem;
-    background: #d5f5e3;
-    padding: .6rem 1rem;
+    gap: 12px;
+  }
+  .year-btn {
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
-    border: 2px solid #2ecc71;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background .15s;
   }
-  .vacation-tracker label { font-size: .8rem; color: #1a1a2e; font-weight: 600; }
-  .vacation-tracker input {
-    width: 50px;
+  .year-btn:hover { background: var(--bg-page); }
+  .year-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 52px;
     text-align: center;
-    padding: .3rem;
-    border: 1px solid #2ecc71;
-    border-radius: 4px;
-    font-size: .95rem;
-    font-weight: 700;
-    background: #fff;
   }
-  .vacation-remaining {
-    font-size: .85rem;
-    font-weight: 700;
-    padding: .3rem .6rem;
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    color: var(--text-secondary);
+  }
+  .mode-btn .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+  }
+  .mode-btn.mode-festivo { background: var(--bg-holiday); border-color: #FECACA; color: #DC2626; }
+  .mode-btn.mode-festivo .dot { background: var(--accent-red); }
+  .mode-btn.mode-vacaciones { background: var(--bg-vacation); border-color: #BBF7D0; color: #16A34A; }
+  .mode-btn.mode-vacaciones .dot { background: var(--accent-green); }
+  .mode-btn.active {
+    outline: 3px solid var(--accent-blue);
+    outline-offset: 1px;
+  }
+  .btn-reset {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-reset:hover { background: var(--bg-page); }
+  .btn-reset svg { width: 14px; height: 14px; }
+
+  /* ===== CONTENT ===== */
+  .content {
+    padding: 32px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ===== STATS ROW ===== */
+  .stats-row {
+    display: flex;
+    gap: 16px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100px;
+  }
+  .stat-card .stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+  }
+  .stat-card .stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .stat-card.tracker {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tracker-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tracker-left label {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .tracker-left input {
+    width: 60px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid var(--border);
     border-radius: 6px;
+    background: #FAFAFA;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .tracker-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .tracker-right .tracker-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .vacation-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
     white-space: nowrap;
   }
-  .vacation-remaining.ok { background: #2ecc71; color: #fff; }
-  .vacation-remaining.warn { background: #f39c12; color: #fff; }
-  .vacation-remaining.over { background: #e74c3c; color: #fff; }
+  .vacation-badge.ok { background: var(--bg-vacation); color: #16A34A; }
+  .vacation-badge.warn { background: #FEF9C3; color: #CA8A04; }
+  .vacation-badge.over { background: var(--bg-holiday); color: #DC2626; }
 
-  .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
-    padding: 1.5rem 2rem 3rem;
+  /* ===== LEGEND ===== */
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
   }
 
+  /* ===== CALENDAR GRID ===== */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  /* ===== MONTH CARD ===== */
   .month-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
     overflow: hidden;
   }
   .month-header {
-    background: #1a1a2e;
-    color: #fff;
-    text-align: center;
-    padding: .5rem;
-    font-weight: 600;
-    font-size: .95rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .5rem .75rem;
+    padding: 12px 16px;
   }
-  .month-stats {
-    font-size: .7rem;
+  .month-header .month-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .month-header .month-stats {
+    font-size: 11px;
+    color: var(--text-muted);
     font-weight: 400;
-    opacity: .85;
-    display: flex;
-    gap: .5rem;
   }
-  .month-stats .stat-f { color: #f39c12; }
-  .month-stats .stat-v { color: #2ecc71; }
-  .month-stats .stat-l { color: #85c1e9; }
-
+  .month-divider {
+    height: 1px;
+    background: var(--border);
+  }
+  .month-body {
+    padding: 8px 12px 12px;
+  }
   .weekday-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-size: .7rem;
-    font-weight: 600;
-    color: #888;
-    padding: .35rem .5rem 0;
+    margin-bottom: 2px;
   }
-
+  .weekday-row div {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 4px 0;
+  }
   .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    padding: .35rem .5rem .5rem;
   }
   .day-cell {
-    aspect-ratio: 1;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: .8rem;
+    font-size: 13px;
+    font-weight: 400;
     border-radius: 6px;
     cursor: pointer;
     transition: transform .1s, box-shadow .1s;
     user-select: none;
-    position: relative;
-    font-weight: 500;
+    color: var(--text-primary);
   }
   .day-cell:hover:not(.empty) {
-    transform: scale(1.15);
-    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    transform: scale(1.12);
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
     z-index: 2;
+    position: relative;
   }
   .day-cell.empty { cursor: default; }
-
-  .day-cell.laborable { background: #eaf2f8; color: #1a1a2e; }
-  .day-cell.weekend { background: #d5d8dc; color: #666; }
-  .day-cell.festivo { background: #f39c12; color: #fff; }
-  .day-cell.vacaciones { background: #2ecc71; color: #fff; }
-
+  .day-cell.laborable { background: var(--bg-working); }
+  .day-cell.weekend { background: var(--bg-weekend); color: var(--text-muted); }
+  .day-cell.festivo { background: var(--bg-holiday); color: #DC2626; font-weight: 500; }
+  .day-cell.vacaciones { background: var(--bg-vacation); color: #16A34A; font-weight: 500; }
   .day-cell.today {
-    outline: 2.5px solid #e74c3c;
+    background: var(--bg-today);
+    outline: 1.5px solid var(--accent-blue);
     outline-offset: -1px;
-  }
-
-  .mode-selector {
-    display: flex;
-    gap: .5rem;
-    align-items: center;
-  }
-  .mode-btn {
-    padding: .35rem .7rem;
-    border-radius: 6px;
-    border: 2px solid transparent;
-    font-size: .8rem;
+    color: var(--accent-blue);
     font-weight: 600;
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .mode-btn.mode-festivo { background: #fdebd0; color: #e67e22; border-color: #f39c12; }
-  .mode-btn.mode-vacaciones { background: #d5f5e3; color: #27ae60; border-color: #2ecc71; }
-  .mode-btn.mode-borrar { background: #fadbd8; color: #c0392b; border-color: #e74c3c; }
-  .mode-btn.active {
-    box-shadow: 0 0 0 4px #fff, 0 0 0 7px #1a1a2e;
-    transform: scale(1.1);
   }
 
-  @media (max-width: 600px) {
-    header { padding: .75rem 1rem; }
-    .calendar-grid { padding: 1rem; gap: 1rem; }
-    .summary { padding: .75rem 1rem; gap: 1rem; }
-    .legend { padding: .5rem 1rem; }
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 1200px) {
+    .calendar-grid { grid-template-columns: repeat(3, 1fr); }
+    header { padding: 0 24px; }
+    .content { padding: 24px; }
+  }
+
+  @media (max-width: 768px) {
+    /* Mobile header */
+    header {
+      height: auto;
+      padding: 12px 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-left svg { width: 20px; height: 20px; }
+    .header-left h1 { font-size: 18px; }
+    .header-left { gap: 10px; }
+    .header-center { gap: 8px; order: 0; }
+    .year-btn { width: 32px; height: 32px; }
+    .year-label { font-size: 16px; }
+    .header-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+      order: 1;
+    }
+    .mode-btn, .btn-reset {
+      width: 100%;
+      height: 32px;
+      padding: 0;
+      justify-content: center;
+      font-size: 12px;
+      gap: 5px;
+    }
+    .mode-btn .dot { width: 6px; height: 6px; border-radius: 3px; }
+
+    /* Mobile content */
+    .content {
+      padding: 16px;
+      gap: 16px;
+    }
+
+    /* Mobile stats: 2x2 grid + tracker */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-card {
+      border-radius: 10px;
+      padding: 12px 14px;
+      gap: 4px;
+      height: 72px;
+    }
+    .stat-card .stat-value { font-size: 24px; }
+    .stat-card .stat-label { font-size: 11px; }
+    .stat-card.tracker {
+      grid-column: 1 / -1;
+      height: 56px;
+      padding: 12px 16px;
+      border-radius: 10px;
+    }
+    .tracker-left label { font-size: 12px; }
+    .tracker-left input {
+      width: 48px;
+      height: 28px;
+      font-size: 16px;
+    }
+    .tracker-right .tracker-label { font-size: 11px; }
+
+    /* Mobile legend */
+    .legend {
+      justify-content: space-between;
+      gap: 0;
+    }
+    .legend-item { gap: 4px; font-size: 10px; }
+    .legend-swatch { width: 8px; height: 8px; border-radius: 2px; }
+    .legend-label-full { display: none; }
+    .legend-label-short { display: inline; }
+
+    /* Mobile calendar */
+    .calendar-grid { grid-template-columns: 1fr; gap: 16px; }
+    .month-card { border-radius: 10px; }
+    .month-header { padding: 10px 12px; }
+    .month-header .month-name { font-size: 14px; }
+    .month-header .month-stats { font-size: 10px; }
+    .month-body { padding: 6px 8px 8px; }
+    .weekday-row div { font-size: 10px; }
+    .days-grid { gap: 2px; }
+    .day-cell { height: 32px; font-size: 13px; }
+  }
+
+  /* Desktop: show full labels, hide short */
+  .legend-label-short { display: none; }
+  @media (max-width: 768px) {
+    .legend-label-short { display: inline; }
+    .legend-label-full { display: none; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>📅 Calendario Anual</h1>
-  <div class="controls">
-    <label for="yearSelect">Año:</label>
-    <select id="yearSelect"></select>
-    <div class="mode-selector">
-      <button class="mode-btn mode-festivo active" data-mode="festivo">Festivo</button>
-      <button class="mode-btn mode-vacaciones" data-mode="vacaciones">Vacaciones</button>
-      <button class="mode-btn mode-borrar" data-mode="borrar">Borrar</button>
-    </div>
-    <button class="btn-reset" id="btnReset">Reset</button>
+  <div class="header-left">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+    <h1>Calendario Anual</h1>
+  </div>
+  <div class="header-center">
+    <button class="year-btn" id="yearPrev">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="year-label" id="yearLabel"></span>
+    <button class="year-btn" id="yearNext">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="header-right">
+    <button class="mode-btn mode-festivo active" data-mode="festivo"><span class="dot"></span>Festivo</button>
+    <button class="mode-btn mode-vacaciones" data-mode="vacaciones"><span class="dot"></span>Vacaciones</button>
+    <button class="btn-reset" id="btnReset">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      Reset
+    </button>
   </div>
 </header>
 
-<div class="legend">
-  <div class="legend-item"><div class="legend-swatch" style="background:#eaf2f8"></div> Laborable</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#d5d8dc"></div> Fin de semana</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#f39c12"></div> Festivo</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#2ecc71"></div> Vacaciones</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:transparent;outline:2.5px solid #e74c3c"></div> Hoy</div>
-</div>
-
-<div class="summary" id="summary">
-  <div class="vacation-tracker">
-    <label for="vacDays">Días de vacaciones/año:</label>
-    <input type="number" id="vacDays" min="0" max="365" value="22">
-    <div class="vacation-remaining ok" id="vacRemaining">Quedan: 22</div>
+<div class="content">
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <span class="stat-value" id="valLaborable" style="color:var(--text-primary)">0</span>
+      <span class="stat-label"><span class="legend-label-full">Dias laborables</span><span class="legend-label-short">Laborables</span></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="valFestivo" style="color:var(--accent-red)">0</span>
+      <span class="stat-label">Festivos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="valVacaciones" style="color:var(--accent-green)">0</span>
+      <span class="stat-label"><span class="legend-label-full">Vacaciones usadas</span><span class="legend-label-short">Vacaciones</span></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="valWeekend" style="color:var(--accent-blue)">0</span>
+      <span class="stat-label">Fines de semana</span>
+    </div>
+    <div class="stat-card tracker">
+      <div class="tracker-left">
+        <label><span class="legend-label-full">Vacaciones / año</span><span class="legend-label-short">Vacaciones restantes</span></label>
+        <input type="number" id="vacDays" min="0" max="365" value="22">
+      </div>
+      <div class="tracker-right">
+        <span class="tracker-label">Quedan</span>
+        <div class="vacation-badge ok" id="vacRemaining">22 días</div>
+      </div>
+    </div>
   </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--bg-working);border:1px solid var(--border)"></div>
+      <span class="legend-label-full">Laborable</span><span class="legend-label-short">Lab.</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--bg-weekend);border:1px solid #D4D4D4"></div>
+      <span class="legend-label-full">Fin de semana</span><span class="legend-label-short">Finde</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--bg-holiday);border:1px solid #F8B4B4"></div>
+      <span class="legend-label-full">Festivo</span><span class="legend-label-short">Festivo</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--bg-vacation);border:1px solid #86EFAC"></div>
+      <span class="legend-label-full">Vacaciones</span><span class="legend-label-short">Vac.</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--bg-today);border:1px solid var(--accent-blue)"></div>
+      <span>Hoy</span>
+    </div>
+  </div>
+
+  <div class="calendar-grid" id="calendarGrid"></div>
 </div>
-<div class="calendar-grid" id="calendarGrid"></div>
 
 <script>
 const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const WEEKDAYS = ['L','M','X','J','V','S','D'];
 
-const yearSelect = document.getElementById('yearSelect');
 const calendarGrid = document.getElementById('calendarGrid');
-const summaryEl = document.getElementById('summary');
 const btnReset = document.getElementById('btnReset');
 const vacDaysInput = document.getElementById('vacDays');
 const vacRemainingEl = document.getElementById('vacRemaining');
+const yearLabel = document.getElementById('yearLabel');
 
-let vacationAllowance = {}; // key: year, value: number of days
-
+let vacationAllowance = {};
 let currentYear = new Date().getFullYear();
 let currentMode = 'festivo';
-let markedDays = {}; // key: "YYYY-MM-DD", value: "festivo" | "vacaciones"
+let markedDays = {};
 let isMouseDown = false;
 let justToggledKey = null;
 
-// Populate year selector
-for (let y = 2020; y <= 2035; y++) {
-  const opt = document.createElement('option');
-  opt.value = y; opt.textContent = y;
-  if (y === currentYear) opt.selected = true;
-  yearSelect.appendChild(opt);
-}
-
-yearSelect.addEventListener('change', () => {
-  currentYear = parseInt(yearSelect.value);
+function setYear(y) {
+  currentYear = y;
+  yearLabel.textContent = y;
   vacDaysInput.value = vacationAllowance[currentYear] || 22;
   render();
-});
+}
+
+document.getElementById('yearPrev').addEventListener('click', () => setYear(currentYear - 1));
+document.getElementById('yearNext').addEventListener('click', () => setYear(currentYear + 1));
 
 vacDaysInput.addEventListener('input', () => {
   vacationAllowance[currentYear] = parseInt(vacDaysInput.value) || 0;
@@ -290,7 +544,6 @@ vacDaysInput.addEventListener('input', () => {
   updateVacationTracker();
 });
 
-// Mode buttons
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -299,7 +552,6 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
   });
 });
 
-// Reset
 btnReset.addEventListener('click', () => {
   if (confirm('¿Resetear todas las marcas del año ' + currentYear + '?')) {
     const prefix = currentYear + '-';
@@ -309,7 +561,6 @@ btnReset.addEventListener('click', () => {
   }
 });
 
-// Mouse drag support
 document.addEventListener('mousedown', () => isMouseDown = true);
 document.addEventListener('mouseup', () => { isMouseDown = false; justToggledKey = null; });
 
@@ -324,9 +575,7 @@ function isWeekend(y, m, d) {
 
 function toggleDay(key, y, m, d) {
   if (isWeekend(y, m, d)) return;
-  if (currentMode === 'borrar') {
-    delete markedDays[key];
-  } else if (markedDays[key] === currentMode) {
+  if (markedDays[key] === currentMode) {
     delete markedDays[key];
   } else {
     markedDays[key] = currentMode;
@@ -337,11 +586,7 @@ function toggleDay(key, y, m, d) {
 
 function applyDay(key, y, m, d) {
   if (isWeekend(y, m, d)) return;
-  if (currentMode === 'borrar') {
-    if (markedDays[key]) { delete markedDays[key]; save(); render(); }
-  } else {
-    if (markedDays[key] !== currentMode) { markedDays[key] = currentMode; save(); render(); }
-  }
+  if (markedDays[key] !== currentMode) { markedDays[key] = currentMode; save(); render(); }
 }
 
 function render() {
@@ -356,11 +601,10 @@ function render() {
     card.className = 'month-card';
 
     const daysInMonth = new Date(currentYear, m + 1, 0).getDate();
-    const firstDow = (new Date(currentYear, m, 1).getDay() + 6) % 7; // Monday=0
+    const firstDow = (new Date(currentYear, m, 1).getDay() + 6) % 7;
 
     let mFestivo = 0, mVacaciones = 0, mLaborable = 0;
 
-    // Count
     for (let d = 1; d <= daysInMonth; d++) {
       const key = dateKey(currentYear, m, d);
       if (isWeekend(currentYear, m, d)) {
@@ -376,15 +620,14 @@ function render() {
 
     card.innerHTML = `
       <div class="month-header">
-        <span>${MONTHS[m]}</span>
-        <div class="month-stats">
-          <span class="stat-f">F:${mFestivo}</span>
-          <span class="stat-v">V:${mVacaciones}</span>
-          <span class="stat-l">L:${mLaborable}</span>
-        </div>
+        <span class="month-name">${MONTHS[m]}</span>
+        <span class="month-stats">F:${mFestivo}  V:${mVacaciones}  L:${mLaborable}</span>
       </div>
-      <div class="weekday-row">${WEEKDAYS.map(w => `<div>${w}</div>`).join('')}</div>
-      <div class="days-grid" data-month="${m}"></div>
+      <div class="month-divider"></div>
+      <div class="month-body">
+        <div class="weekday-row">${WEEKDAYS.map(w => `<div>${w}</div>`).join('')}</div>
+        <div class="days-grid" data-month="${m}"></div>
+      </div>
     `;
 
     const grid = card.querySelector('.days-grid');
@@ -399,11 +642,11 @@ function render() {
       const cell = document.createElement('div');
       const key = dateKey(currentYear, m, d);
       let cls = 'day-cell';
-      if (isWeekend(currentYear, m, d)) cls += ' weekend';
+      if (key === todayKey) cls += ' today';
+      else if (isWeekend(currentYear, m, d)) cls += ' weekend';
       else if (markedDays[key] === 'festivo') cls += ' festivo';
       else if (markedDays[key] === 'vacaciones') cls += ' vacaciones';
       else cls += ' laborable';
-      if (key === todayKey) cls += ' today';
       cell.className = cls;
       cell.textContent = d;
       cell.addEventListener('mousedown', (e) => { e.preventDefault(); justToggledKey = key; toggleDay(key, currentYear, m, d); });
@@ -411,43 +654,37 @@ function render() {
       grid.appendChild(cell);
     }
 
+    const totalCells = firstDow + daysInMonth;
+    const remainder = totalCells % 7;
+    if (remainder > 0) {
+      for (let i = 0; i < 7 - remainder; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day-cell empty';
+        grid.appendChild(empty);
+      }
+    }
+
     calendarGrid.appendChild(card);
   }
 
-  // Update summary blocks (keep vacation tracker intact)
-  const summaryBlocks = summaryEl.querySelectorAll('.summary-block');
-  summaryBlocks.forEach(b => b.remove());
-
-  const blocks = [
-    { val: totalLaborable, color: '', label: 'Días laborables' },
-    { val: totalFestivo, color: '#f39c12', label: 'Festivos' },
-    { val: totalVacaciones, color: '#2ecc71', label: 'Vacaciones consumidas' },
-    { val: totalWeekend, color: '#999', label: 'Fines de semana' },
-    { val: totalLaborable + totalFestivo + totalVacaciones + totalWeekend, color: '', label: 'Total días' },
-  ];
-
-  const tracker = summaryEl.querySelector('.vacation-tracker');
-  blocks.forEach(b => {
-    const div = document.createElement('div');
-    div.className = 'summary-block';
-    div.innerHTML = `<strong${b.color ? ' style="color:'+b.color+'"' : ''}>${b.val}</strong><span>${b.label}</span>`;
-    summaryEl.insertBefore(div, tracker);
-  });
+  document.getElementById('valLaborable').textContent = totalLaborable;
+  document.getElementById('valFestivo').textContent = totalFestivo;
+  document.getElementById('valVacaciones').textContent = totalVacaciones;
+  document.getElementById('valWeekend').textContent = totalWeekend;
 
   updateVacationTracker(totalVacaciones);
 }
 
 function updateVacationTracker(usedVacaciones) {
   if (usedVacaciones === undefined) {
-    // Count from markedDays
     usedVacaciones = 0;
     const prefix = currentYear + '-';
     Object.keys(markedDays).forEach(k => { if (k.startsWith(prefix) && markedDays[k] === 'vacaciones') usedVacaciones++; });
   }
   const total = vacationAllowance[currentYear] || 22;
   const remaining = total - usedVacaciones;
-  vacRemainingEl.textContent = remaining >= 0 ? `Quedan: ${remaining}` : `Exceso: ${Math.abs(remaining)}`;
-  vacRemainingEl.className = 'vacation-remaining ' + (remaining > 5 ? 'ok' : remaining >= 0 ? 'warn' : 'over');
+  vacRemainingEl.textContent = remaining >= 0 ? `${remaining} días` : `-${Math.abs(remaining)} días`;
+  vacRemainingEl.className = 'vacation-badge ' + (remaining > 5 ? 'ok' : remaining >= 0 ? 'warn' : 'over');
 }
 
 function save() {
@@ -468,7 +705,7 @@ function load() {
 }
 
 load();
-render();
+setYear(currentYear);
 </script>
 </body>
 </html>
