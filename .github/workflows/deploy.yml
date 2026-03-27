@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Call deploy webhook
         run: |
-          curl -sf -o /dev/null -w "%{http_code}" "${{ secrets.DEPLOY_WEBHOOK_URL }}"
+          curl -sf -X POST -o /dev/null -w "%{http_code}" "${{ secrets.DEPLOY_WEBHOOK_URL }}"
