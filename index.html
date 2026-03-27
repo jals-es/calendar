@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Anual</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+  header {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  header h1 { font-size: 1.4rem; font-weight: 600; }
+  .controls { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+  .controls label { font-size: .85rem; }
+  .controls select, .controls button {
+    padding: .4rem .75rem;
+    border-radius: 6px;
+    border: none;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+  .controls select { background: #fff; color: #1a1a2e; }
+  .btn-reset {
+    background: #e74c3c;
+    color: #fff;
+    font-weight: 600;
+    transition: background .2s;
+  }
+  .btn-reset:hover { background: #c0392b; }
+
+  .legend {
+    display: flex;
+    gap: 1.25rem;
+    padding: .75rem 2rem;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: .85rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: .35rem; }
+  .legend-swatch {
+    width: 16px; height: 16px; border-radius: 4px; border: 1px solid #ccc;
+  }
+
+  .summary {
+    padding: 1rem 2rem;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    font-size: .9rem;
+    align-items: center;
+  }
+  .summary-block { display: flex; flex-direction: column; gap: .2rem; }
+  .summary-block strong { font-size: 1.5rem; }
+  .summary-block span { color: #666; font-size: .8rem; }
+
+  .vacation-tracker {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: #d5f5e3;
+    padding: .6rem 1rem;
+    border-radius: 8px;
+    border: 2px solid #2ecc71;
+  }
+  .vacation-tracker label { font-size: .8rem; color: #1a1a2e; font-weight: 600; }
+  .vacation-tracker input {
+    width: 50px;
+    text-align: center;
+    padding: .3rem;
+    border: 1px solid #2ecc71;
+    border-radius: 4px;
+    font-size: .95rem;
+    font-weight: 700;
+    background: #fff;
+  }
+  .vacation-remaining {
+    font-size: .85rem;
+    font-weight: 700;
+    padding: .3rem .6rem;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .vacation-remaining.ok { background: #2ecc71; color: #fff; }
+  .vacation-remaining.warn { background: #f39c12; color: #fff; }
+  .vacation-remaining.over { background: #e74c3c; color: #fff; }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    padding: 1.5rem 2rem 3rem;
+  }
+
+  .month-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    overflow: hidden;
+  }
+  .month-header {
+    background: #1a1a2e;
+    color: #fff;
+    text-align: center;
+    padding: .5rem;
+    font-weight: 600;
+    font-size: .95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem .75rem;
+  }
+  .month-stats {
+    font-size: .7rem;
+    font-weight: 400;
+    opacity: .85;
+    display: flex;
+    gap: .5rem;
+  }
+  .month-stats .stat-f { color: #f39c12; }
+  .month-stats .stat-v { color: #2ecc71; }
+  .month-stats .stat-l { color: #85c1e9; }
+
+  .weekday-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: .7rem;
+    font-weight: 600;
+    color: #888;
+    padding: .35rem .5rem 0;
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    padding: .35rem .5rem .5rem;
+  }
+  .day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+    user-select: none;
+    position: relative;
+    font-weight: 500;
+  }
+  .day-cell:hover:not(.empty) {
+    transform: scale(1.15);
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    z-index: 2;
+  }
+  .day-cell.empty { cursor: default; }
+
+  .day-cell.laborable { background: #eaf2f8; color: #1a1a2e; }
+  .day-cell.weekend { background: #d5d8dc; color: #666; }
+  .day-cell.festivo { background: #f39c12; color: #fff; }
+  .day-cell.vacaciones { background: #2ecc71; color: #fff; }
+
+  .day-cell.today {
+    outline: 2.5px solid #e74c3c;
+    outline-offset: -1px;
+  }
+
+  .mode-selector {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+  }
+  .mode-btn {
+    padding: .35rem .7rem;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .mode-btn.mode-festivo { background: #fdebd0; color: #e67e22; border-color: #f39c12; }
+  .mode-btn.mode-vacaciones { background: #d5f5e3; color: #27ae60; border-color: #2ecc71; }
+  .mode-btn.mode-borrar { background: #fadbd8; color: #c0392b; border-color: #e74c3c; }
+  .mode-btn.active {
+    box-shadow: 0 0 0 4px #fff, 0 0 0 7px #1a1a2e;
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 600px) {
+    header { padding: .75rem 1rem; }
+    .calendar-grid { padding: 1rem; gap: 1rem; }
+    .summary { padding: .75rem 1rem; gap: 1rem; }
+    .legend { padding: .5rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📅 Calendario Anual</h1>
+  <div class="controls">
+    <label for="yearSelect">Año:</label>
+    <select id="yearSelect"></select>
+    <div class="mode-selector">
+      <button class="mode-btn mode-festivo active" data-mode="festivo">Festivo</button>
+      <button class="mode-btn mode-vacaciones" data-mode="vacaciones">Vacaciones</button>
+      <button class="mode-btn mode-borrar" data-mode="borrar">Borrar</button>
+    </div>
+    <button class="btn-reset" id="btnReset">Reset</button>
+  </div>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#eaf2f8"></div> Laborable</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#d5d8dc"></div> Fin de semana</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#f39c12"></div> Festivo</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#2ecc71"></div> Vacaciones</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:transparent;outline:2.5px solid #e74c3c"></div> Hoy</div>
+</div>
+
+<div class="summary" id="summary">
+  <div class="vacation-tracker">
+    <label for="vacDays">Días de vacaciones/año:</label>
+    <input type="number" id="vacDays" min="0" max="365" value="22">
+    <div class="vacation-remaining ok" id="vacRemaining">Quedan: 22</div>
+  </div>
+</div>
+<div class="calendar-grid" id="calendarGrid"></div>
+
+<script>
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const WEEKDAYS = ['L','M','X','J','V','S','D'];
+
+const yearSelect = document.getElementById('yearSelect');
+const calendarGrid = document.getElementById('calendarGrid');
+const summaryEl = document.getElementById('summary');
+const btnReset = document.getElementById('btnReset');
+const vacDaysInput = document.getElementById('vacDays');
+const vacRemainingEl = document.getElementById('vacRemaining');
+
+let vacationAllowance = {}; // key: year, value: number of days
+
+let currentYear = new Date().getFullYear();
+let currentMode = 'festivo';
+let markedDays = {}; // key: "YYYY-MM-DD", value: "festivo" | "vacaciones"
+let isMouseDown = false;
+let justToggledKey = null;
+
+// Populate year selector
+for (let y = 2020; y <= 2035; y++) {
+  const opt = document.createElement('option');
+  opt.value = y; opt.textContent = y;
+  if (y === currentYear) opt.selected = true;
+  yearSelect.appendChild(opt);
+}
+
+yearSelect.addEventListener('change', () => {
+  currentYear = parseInt(yearSelect.value);
+  vacDaysInput.value = vacationAllowance[currentYear] || 22;
+  render();
+});
+
+vacDaysInput.addEventListener('input', () => {
+  vacationAllowance[currentYear] = parseInt(vacDaysInput.value) || 0;
+  save();
+  updateVacationTracker();
+});
+
+// Mode buttons
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+  });
+});
+
+// Reset
+btnReset.addEventListener('click', () => {
+  if (confirm('¿Resetear todas las marcas del año ' + currentYear + '?')) {
+    const prefix = currentYear + '-';
+    Object.keys(markedDays).forEach(k => { if (k.startsWith(prefix)) delete markedDays[k]; });
+    save();
+    render();
+  }
+});
+
+// Mouse drag support
+document.addEventListener('mousedown', () => isMouseDown = true);
+document.addEventListener('mouseup', () => { isMouseDown = false; justToggledKey = null; });
+
+function dateKey(y, m, d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function isWeekend(y, m, d) {
+  const dow = new Date(y, m, d).getDay();
+  return dow === 0 || dow === 6;
+}
+
+function toggleDay(key, y, m, d) {
+  if (isWeekend(y, m, d)) return;
+  if (currentMode === 'borrar') {
+    delete markedDays[key];
+  } else if (markedDays[key] === currentMode) {
+    delete markedDays[key];
+  } else {
+    markedDays[key] = currentMode;
+  }
+  save();
+  render();
+}
+
+function applyDay(key, y, m, d) {
+  if (isWeekend(y, m, d)) return;
+  if (currentMode === 'borrar') {
+    if (markedDays[key]) { delete markedDays[key]; save(); render(); }
+  } else {
+    if (markedDays[key] !== currentMode) { markedDays[key] = currentMode; save(); render(); }
+  }
+}
+
+function render() {
+  calendarGrid.innerHTML = '';
+  const today = new Date();
+  const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+  let totalFestivo = 0, totalVacaciones = 0, totalLaborable = 0, totalWeekend = 0;
+
+  for (let m = 0; m < 12; m++) {
+    const card = document.createElement('div');
+    card.className = 'month-card';
+
+    const daysInMonth = new Date(currentYear, m + 1, 0).getDate();
+    const firstDow = (new Date(currentYear, m, 1).getDay() + 6) % 7; // Monday=0
+
+    let mFestivo = 0, mVacaciones = 0, mLaborable = 0;
+
+    // Count
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = dateKey(currentYear, m, d);
+      if (isWeekend(currentYear, m, d)) {
+        totalWeekend++;
+      } else if (markedDays[key] === 'festivo') {
+        mFestivo++; totalFestivo++;
+      } else if (markedDays[key] === 'vacaciones') {
+        mVacaciones++; totalVacaciones++;
+      } else {
+        mLaborable++; totalLaborable++;
+      }
+    }
+
+    card.innerHTML = `
+      <div class="month-header">
+        <span>${MONTHS[m]}</span>
+        <div class="month-stats">
+          <span class="stat-f">F:${mFestivo}</span>
+          <span class="stat-v">V:${mVacaciones}</span>
+          <span class="stat-l">L:${mLaborable}</span>
+        </div>
+      </div>
+      <div class="weekday-row">${WEEKDAYS.map(w => `<div>${w}</div>`).join('')}</div>
+      <div class="days-grid" data-month="${m}"></div>
+    `;
+
+    const grid = card.querySelector('.days-grid');
+
+    for (let i = 0; i < firstDow; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'day-cell empty';
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement('div');
+      const key = dateKey(currentYear, m, d);
+      let cls = 'day-cell';
+      if (isWeekend(currentYear, m, d)) cls += ' weekend';
+      else if (markedDays[key] === 'festivo') cls += ' festivo';
+      else if (markedDays[key] === 'vacaciones') cls += ' vacaciones';
+      else cls += ' laborable';
+      if (key === todayKey) cls += ' today';
+      cell.className = cls;
+      cell.textContent = d;
+      cell.addEventListener('mousedown', (e) => { e.preventDefault(); justToggledKey = key; toggleDay(key, currentYear, m, d); });
+      cell.addEventListener('mouseenter', () => { if (isMouseDown && key !== justToggledKey) applyDay(key, currentYear, m, d); });
+      grid.appendChild(cell);
+    }
+
+    calendarGrid.appendChild(card);
+  }
+
+  // Update summary blocks (keep vacation tracker intact)
+  const summaryBlocks = summaryEl.querySelectorAll('.summary-block');
+  summaryBlocks.forEach(b => b.remove());
+
+  const blocks = [
+    { val: totalLaborable, color: '', label: 'Días laborables' },
+    { val: totalFestivo, color: '#f39c12', label: 'Festivos' },
+    { val: totalVacaciones, color: '#2ecc71', label: 'Vacaciones consumidas' },
+    { val: totalWeekend, color: '#999', label: 'Fines de semana' },
+    { val: totalLaborable + totalFestivo + totalVacaciones + totalWeekend, color: '', label: 'Total días' },
+  ];
+
+  const tracker = summaryEl.querySelector('.vacation-tracker');
+  blocks.forEach(b => {
+    const div = document.createElement('div');
+    div.className = 'summary-block';
+    div.innerHTML = `<strong${b.color ? ' style="color:'+b.color+'"' : ''}>${b.val}</strong><span>${b.label}</span>`;
+    summaryEl.insertBefore(div, tracker);
+  });
+
+  updateVacationTracker(totalVacaciones);
+}
+
+function updateVacationTracker(usedVacaciones) {
+  if (usedVacaciones === undefined) {
+    // Count from markedDays
+    usedVacaciones = 0;
+    const prefix = currentYear + '-';
+    Object.keys(markedDays).forEach(k => { if (k.startsWith(prefix) && markedDays[k] === 'vacaciones') usedVacaciones++; });
+  }
+  const total = vacationAllowance[currentYear] || 22;
+  const remaining = total - usedVacaciones;
+  vacRemainingEl.textContent = remaining >= 0 ? `Quedan: ${remaining}` : `Exceso: ${Math.abs(remaining)}`;
+  vacRemainingEl.className = 'vacation-remaining ' + (remaining > 5 ? 'ok' : remaining >= 0 ? 'warn' : 'over');
+}
+
+function save() {
+  localStorage.setItem('jals-calendar', JSON.stringify(markedDays));
+  localStorage.setItem('jals-calendar-vac', JSON.stringify(vacationAllowance));
+}
+
+function load() {
+  try {
+    const data = JSON.parse(localStorage.getItem('jals-calendar'));
+    if (data) markedDays = data;
+  } catch(e) {}
+  try {
+    const data = JSON.parse(localStorage.getItem('jals-calendar-vac'));
+    if (data) vacationAllowance = data;
+  } catch(e) {}
+  vacDaysInput.value = vacationAllowance[currentYear] || 22;
+}
+
+load();
+render();
+</script>
+</body>
+</html>
