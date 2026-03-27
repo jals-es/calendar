@@ -1,0 +1,14 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call deploy webhook
+        run: |
+          curl -sf -o /dev/null -w "%{http_code}" "${{ secrets.DEPLOY_WEBHOOK_URL }}"
