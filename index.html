@@ -175,9 +175,15 @@
   }
   .stat-card.tracker {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 12px;
+    height: auto;
+  }
+  .tracker-top {
+    display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
   }
   .tracker-left {
     display: flex;
@@ -188,7 +194,7 @@
     font-size: 13px;
     color: var(--text-secondary);
   }
-  .tracker-left input {
+  .tracker-left input[type="number"] {
     width: 60px;
     height: 32px;
     text-align: center;
@@ -209,6 +215,43 @@
   .tracker-right .tracker-label {
     font-size: 12px;
     color: var(--text-secondary);
+  }
+  .sat-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .sat-check input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-card);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    margin: 0;
+  }
+  .sat-check input:checked {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+  }
+  .sat-check input:checked::after {
+    content: '';
+    position: absolute;
+    left: 4.5px;
+    top: 1.5px;
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
   }
   .vacation-badge {
     padding: 4px 12px;
@@ -321,11 +364,13 @@
   .day-cell.festivo { background: var(--bg-holiday); color: #DC2626; font-weight: 500; }
   .day-cell.vacaciones { background: var(--bg-vacation); color: #16A34A; font-weight: 500; }
   .day-cell.today {
-    background: var(--bg-today);
-    outline: 1.5px solid var(--accent-blue);
+    outline: 2px solid var(--accent-blue);
     outline-offset: -1px;
-    color: var(--accent-blue);
     font-weight: 600;
+  }
+  .day-cell.laborable.today {
+    background: var(--bg-today);
+    color: var(--accent-blue);
   }
 
   /* ===== MOBILE RESPONSIVE ===== */
@@ -388,10 +433,14 @@
     .stat-card .stat-label { font-size: 11px; }
     .stat-card.tracker {
       grid-column: 1 / -1;
-      height: 56px;
+      height: auto;
       padding: 12px 16px;
       border-radius: 10px;
+      gap: 10px;
     }
+    .sat-check { gap: 6px; font-size: 11px; }
+    .sat-check input { width: 16px; height: 16px; border-radius: 3px; }
+    .sat-check input:checked::after { left: 4px; top: 1px; width: 4.5px; height: 8px; }
     .tracker-left label { font-size: 12px; }
     .tracker-left input {
       width: 48px;
@@ -419,7 +468,7 @@
     .month-body { padding: 6px 8px 8px; }
     .weekday-row div { font-size: 10px; }
     .days-grid { gap: 2px; }
-    .day-cell { height: 32px; font-size: 13px; }
+    .day-cell { height: 32px; font-size: 11px; }
   }
 
   /* Desktop: show full labels, hide short */
@@ -475,14 +524,17 @@
       <span class="stat-label">Fines de semana</span>
     </div>
     <div class="stat-card tracker">
-      <div class="tracker-left">
-        <label><span class="legend-label-full">Vacaciones / año</span><span class="legend-label-short">Vacaciones restantes</span></label>
-        <input type="number" id="vacDays" min="0" max="365" value="22">
+      <div class="tracker-top">
+        <div class="tracker-left">
+          <label>Vacaciones / año</label>
+          <input type="number" id="vacDays" min="0" max="365" value="22">
+        </div>
+        <div class="tracker-right">
+          <span class="tracker-label">Quedan</span>
+          <div class="vacation-badge ok" id="vacRemaining">22 días</div>
+        </div>
       </div>
-      <div class="tracker-right">
-        <span class="tracker-label">Quedan</span>
-        <div class="vacation-badge ok" id="vacRemaining">22 días</div>
-      </div>
+      <label class="sat-check"><input type="checkbox" id="satWork"> Sábados laborables</label>
     </div>
   </div>
 
@@ -521,8 +573,10 @@ const btnReset = document.getElementById('btnReset');
 const vacDaysInput = document.getElementById('vacDays');
 const vacRemainingEl = document.getElementById('vacRemaining');
 const yearLabel = document.getElementById('yearLabel');
+const satWorkCheck = document.getElementById('satWork');
 
 let vacationAllowance = {};
+let satNonWorking = {};
 let currentYear = new Date().getFullYear();
 let currentMode = 'festivo';
 let markedDays = {};
@@ -533,6 +587,7 @@ function setYear(y) {
   currentYear = y;
   yearLabel.textContent = y;
   vacDaysInput.value = vacationAllowance[currentYear] || 22;
+  satWorkCheck.checked = satNonWorking[currentYear] === true;
   render();
 }
 
@@ -544,6 +599,13 @@ vacDaysInput.addEventListener('input', () => {
   save();
   updateVacationTracker();
 });
+
+satWorkCheck.addEventListener('change', () => {
+  satNonWorking[currentYear] = satWorkCheck.checked;
+  save();
+  render();
+});
+
 
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -569,13 +631,18 @@ function dateKey(y, m, d) {
   return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 }
 
+function isSatWorking() {
+  return satNonWorking[currentYear] === true;
+}
+
 function isWeekend(y, m, d) {
   const dow = new Date(y, m, d).getDay();
-  return dow === 0 || dow === 6;
+  if (dow === 0) return true;
+  if (dow === 6) return !isSatWorking();
+  return false;
 }
 
 function toggleDay(key, y, m, d) {
-  if (isWeekend(y, m, d)) return;
   if (markedDays[key] === currentMode) {
     delete markedDays[key];
   } else {
@@ -586,7 +653,6 @@ function toggleDay(key, y, m, d) {
 }
 
 function applyDay(key, y, m, d) {
-  if (isWeekend(y, m, d)) return;
   if (markedDays[key] !== currentMode) { markedDays[key] = currentMode; save(); render(); }
 }
 
@@ -608,12 +674,12 @@ function render() {
 
     for (let d = 1; d <= daysInMonth; d++) {
       const key = dateKey(currentYear, m, d);
-      if (isWeekend(currentYear, m, d)) {
-        totalWeekend++;
-      } else if (markedDays[key] === 'festivo') {
+      if (markedDays[key] === 'festivo') {
         mFestivo++; totalFestivo++;
       } else if (markedDays[key] === 'vacaciones') {
         mVacaciones++; totalVacaciones++;
+      } else if (isWeekend(currentYear, m, d)) {
+        totalWeekend++;
       } else {
         mLaborable++; totalLaborable++;
       }
@@ -643,11 +709,11 @@ function render() {
       const cell = document.createElement('div');
       const key = dateKey(currentYear, m, d);
       let cls = 'day-cell';
-      if (key === todayKey) cls += ' today';
-      else if (isWeekend(currentYear, m, d)) cls += ' weekend';
-      else if (markedDays[key] === 'festivo') cls += ' festivo';
+      if (markedDays[key] === 'festivo') cls += ' festivo';
       else if (markedDays[key] === 'vacaciones') cls += ' vacaciones';
+      else if (isWeekend(currentYear, m, d)) cls += ' weekend';
       else cls += ' laborable';
+      if (key === todayKey) cls += ' today';
       cell.className = cls;
       cell.textContent = d;
       cell.addEventListener('mousedown', (e) => { e.preventDefault(); justToggledKey = key; toggleDay(key, currentYear, m, d); });
@@ -691,6 +757,7 @@ function updateVacationTracker(usedVacaciones) {
 function save() {
   localStorage.setItem('jals-calendar', JSON.stringify(markedDays));
   localStorage.setItem('jals-calendar-vac', JSON.stringify(vacationAllowance));
+  localStorage.setItem('jals-calendar-sat', JSON.stringify(satNonWorking));
 }
 
 function load() {
@@ -703,6 +770,11 @@ function load() {
     if (data) vacationAllowance = data;
   } catch(e) {}
   vacDaysInput.value = vacationAllowance[currentYear] || 22;
+  try {
+    const data = JSON.parse(localStorage.getItem('jals-calendar-sat'));
+    if (data) satNonWorking = data;
+  } catch(e) {}
+  satWorkCheck.checked = satNonWorking[currentYear] === true;
 }
 
 load();
