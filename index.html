@@ -148,6 +148,118 @@
   }
   .btn-reset:hover { background: var(--bg-page); }
   .btn-reset svg { width: 14px; height: 14px; }
+  .btn-save {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid var(--accent-blue);
+    background: var(--accent-blue);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-save:hover { background: #2563EB; }
+  .btn-save svg { width: 14px; height: 14px; }
+  .btn-import {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-import:hover { background: var(--bg-page); }
+  .btn-import svg { width: 14px; height: 14px; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 28px;
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  }
+  .modal h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .modal p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .modal-code {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #FAFAFA;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 12px;
+    word-break: break-all;
+    resize: none;
+    color: var(--text-primary);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    justify-content: flex-end;
+  }
+  .modal-btn {
+    height: 36px;
+    padding: 0 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: background .15s;
+  }
+  .modal-btn:hover { background: var(--bg-page); }
+  .modal-btn.primary {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #fff;
+  }
+  .modal-btn.primary:hover { background: #2563EB; }
+  .modal-btn.success {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: #fff;
+  }
 
   /* ===== CONTENT ===== */
   .content {
@@ -410,13 +522,17 @@
       width: 100%;
       order: 1;
     }
-    .mode-btn, .btn-reset {
+    .mode-btn, .btn-reset, .btn-save, .btn-import {
       width: 100%;
       height: 32px;
       padding: 0;
       justify-content: center;
-      font-size: 12px;
-      gap: 5px;
+      font-size: 11px;
+      gap: 4px;
+    }
+    .btn-save svg, .btn-import svg { width: 12px; height: 12px; }
+    .header-right {
+      grid-template-columns: repeat(5, 1fr) !important;
     }
     .mode-btn .dot { width: 6px; height: 6px; border-radius: 3px; }
 
@@ -511,6 +627,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
       Reset
     </button>
+    <button class="btn-save" id="btnSave">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Guardar
+    </button>
+    <button class="btn-import" id="btnImport">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Importar
+    </button>
   </div>
 </header>
 
@@ -571,6 +695,35 @@
   </div>
 
   <div class="calendar-grid" id="calendarGrid"></div>
+</div>
+
+<!-- Modal Guardar -->
+<div class="modal-overlay" id="modalSave">
+  <div class="modal">
+    <h2>Guardar calendario</h2>
+    <p>Tu calendario se guarda con un código corto. Cópialo para importarlo en otro dispositivo o compartirlo.</p>
+    <div style="display:flex;align-items:center;gap:8px">
+      <input class="modal-code" id="saveCode" readonly style="min-height:auto;height:44px;font-size:18px;text-align:center;letter-spacing:2px;font-weight:600">
+      <button class="modal-btn primary" id="btnCopyCode" style="white-space:nowrap;height:44px">Copiar</button>
+    </div>
+    <p id="saveStatus" style="margin-top:12px;margin-bottom:0;text-align:center"></p>
+    <div class="modal-actions">
+      <button class="modal-btn" id="btnCloseSave">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Importar -->
+<div class="modal-overlay" id="modalImport">
+  <div class="modal">
+    <h2>Importar calendario</h2>
+    <p>Introduce el código corto de un calendario guardado para cargarlo. Esto reemplazará todos los datos actuales.</p>
+    <input class="modal-code" id="importCode" placeholder="Ej: a1b2c3d4" style="min-height:auto;height:44px;font-size:18px;text-align:center;letter-spacing:2px;font-weight:600">
+    <div class="modal-actions">
+      <button class="modal-btn" id="btnCloseImport">Cancelar</button>
+      <button class="modal-btn primary" id="btnDoImport">Importar</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -785,6 +938,104 @@ function load() {
   } catch(e) {}
   satWorkCheck.checked = satNonWorking[currentYear] === true;
 }
+
+// ===== SAVE / IMPORT =====
+let calendarId = localStorage.getItem('jals-calendar-id') || null;
+
+const modalSave = document.getElementById('modalSave');
+const modalImport = document.getElementById('modalImport');
+const saveCodeEl = document.getElementById('saveCode');
+const saveStatusEl = document.getElementById('saveStatus');
+const importCodeEl = document.getElementById('importCode');
+
+async function saveToServer() {
+  const payload = { marks: markedDays, vac: vacationAllowance, sat: satNonWorking };
+  saveCodeEl.value = '...';
+  saveStatusEl.textContent = 'Guardando...';
+  saveStatusEl.style.color = 'var(--text-secondary)';
+  modalSave.classList.add('active');
+  try {
+    const res = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: calendarId, data: payload })
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error);
+    calendarId = result.id;
+    localStorage.setItem('jals-calendar-id', calendarId);
+    saveCodeEl.value = calendarId;
+    saveStatusEl.textContent = 'Guardado correctamente';
+    saveStatusEl.style.color = 'var(--accent-green)';
+  } catch(e) {
+    saveStatusEl.textContent = 'Error al guardar: ' + e.message;
+    saveStatusEl.style.color = 'var(--accent-red)';
+  }
+}
+
+async function loadFromServer(id) {
+  try {
+    const res = await fetch('/api/load/' + encodeURIComponent(id));
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Error desconocido');
+    }
+    const result = await res.json();
+    const d = result.data;
+    markedDays = d.marks || {};
+    vacationAllowance = d.vac || {};
+    satNonWorking = d.sat || {};
+    calendarId = id;
+    localStorage.setItem('jals-calendar-id', id);
+    save();
+    vacDaysInput.value = vacationAllowance[currentYear] || 22;
+    satWorkCheck.checked = satNonWorking[currentYear] === true;
+    render();
+    return true;
+  } catch(e) {
+    alert('No se pudo importar: ' + e.message);
+    return false;
+  }
+}
+
+document.getElementById('btnSave').addEventListener('click', saveToServer);
+
+document.getElementById('btnCopyCode').addEventListener('click', () => {
+  const val = saveCodeEl.value;
+  if (!val || val === '...') return;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.getElementById('btnCopyCode');
+    btn.textContent = 'Copiado!';
+    btn.classList.remove('primary');
+    btn.classList.add('success');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('success'); btn.classList.add('primary'); }, 2000);
+  });
+});
+
+document.getElementById('btnCloseSave').addEventListener('click', () => modalSave.classList.remove('active'));
+
+document.getElementById('btnImport').addEventListener('click', () => {
+  importCodeEl.value = '';
+  modalImport.classList.add('active');
+});
+
+document.getElementById('btnDoImport').addEventListener('click', async () => {
+  const code = importCodeEl.value.trim();
+  if (!code) return;
+  const btn = document.getElementById('btnDoImport');
+  btn.textContent = 'Cargando...';
+  btn.disabled = true;
+  const ok = await loadFromServer(code);
+  btn.textContent = 'Importar';
+  btn.disabled = false;
+  if (ok) modalImport.classList.remove('active');
+});
+
+document.getElementById('btnCloseImport').addEventListener('click', () => modalImport.classList.remove('active'));
+
+[modalSave, modalImport].forEach(modal => {
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+});
 
 load();
 setYear(currentYear);

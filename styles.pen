@@ -448,7 +448,6 @@
                   "id": "DbAoi",
                   "name": "Card Vacaciones Tracker",
                   "width": "fill_container",
-                  "height": 100,
                   "fill": "$bg-card",
                   "cornerRadius": 12,
                   "stroke": {
@@ -456,53 +455,107 @@
                     "thickness": 1,
                     "fill": "$border"
                   },
-                  "gap": 16,
+                  "layout": "vertical",
+                  "gap": 12,
                   "padding": 20,
-                  "justifyContent": "space_between",
-                  "alignItems": "center",
                   "children": [
                     {
                       "type": "frame",
-                      "id": "YNGYy",
-                      "name": "card5left",
-                      "layout": "vertical",
-                      "gap": 4,
+                      "id": "DVo2Q",
+                      "name": "card5topRow",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "RDlLh",
-                          "name": "card5label",
-                          "fill": "$text-secondary",
-                          "content": "Vacaciones / ano",
-                          "fontFamily": "Inter",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
                           "type": "frame",
-                          "id": "9an2U",
-                          "name": "card5input",
-                          "width": 60,
-                          "height": 32,
-                          "fill": "#FAFAFA",
-                          "cornerRadius": 6,
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1,
-                            "fill": "$border"
-                          },
-                          "justifyContent": "center",
-                          "alignItems": "center",
+                          "id": "YNGYy",
+                          "name": "card5left",
+                          "layout": "vertical",
+                          "gap": 4,
                           "children": [
                             {
                               "type": "text",
-                              "id": "WCeGz",
-                              "name": "card5inputVal",
-                              "fill": "$text-primary",
-                              "content": "22",
-                              "fontFamily": "Space Grotesk",
-                              "fontSize": 16,
-                              "fontWeight": "600"
+                              "id": "RDlLh",
+                              "name": "card5label",
+                              "fill": "$text-secondary",
+                              "content": "Vacaciones / año",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "9an2U",
+                              "name": "card5input",
+                              "width": 60,
+                              "height": 32,
+                              "fill": "#FAFAFA",
+                              "cornerRadius": 6,
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "$border"
+                              },
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WCeGz",
+                                  "name": "card5inputVal",
+                                  "fill": "$text-primary",
+                                  "content": "22",
+                                  "fontFamily": "Space Grotesk",
+                                  "fontSize": 16,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "aAlhc",
+                          "name": "card5right",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GzQ9H",
+                              "name": "card5remain",
+                              "fill": "$text-secondary",
+                              "content": "Quedan",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "deN1I",
+                              "name": "card5badge",
+                              "fill": "$bg-vacation",
+                              "cornerRadius": 20,
+                              "padding": [
+                                4,
+                                12
+                              ],
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "aUkFj",
+                                  "name": "card5badgeVal",
+                                  "fill": "#16A34A",
+                                  "content": "22 dias",
+                                  "fontFamily": "Space Grotesk",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -510,46 +563,48 @@
                     },
                     {
                       "type": "frame",
-                      "id": "aAlhc",
-                      "name": "card5right",
-                      "layout": "vertical",
-                      "gap": 4,
-                      "alignItems": "end",
+                      "id": "PWzze",
+                      "name": "card5check",
+                      "gap": 8,
+                      "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "GzQ9H",
-                          "name": "card5remain",
-                          "fill": "$text-secondary",
-                          "content": "Quedan",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
                           "type": "frame",
-                          "id": "deN1I",
-                          "name": "card5badge",
-                          "fill": "$bg-vacation",
-                          "cornerRadius": 20,
-                          "padding": [
-                            4,
-                            12
-                          ],
+                          "id": "vCttf",
+                          "name": "checkbox",
+                          "width": 18,
+                          "height": 18,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 4,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1.5,
+                            "fill": "$border"
+                          },
                           "justifyContent": "center",
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "text",
-                              "id": "aUkFj",
-                              "name": "card5badgeVal",
-                              "fill": "#16A34A",
-                              "content": "22 dias",
-                              "fontFamily": "Space Grotesk",
-                              "fontSize": 14,
-                              "fontWeight": "600"
+                              "type": "icon_font",
+                              "id": "ogCky",
+                              "name": "checkIcon",
+                              "width": 12,
+                              "height": 12,
+                              "iconFontName": "check",
+                              "iconFontFamily": "lucide",
+                              "fill": "#FFFFFF"
                             }
                           ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "d1Qlk",
+                          "name": "checkLabel",
+                          "fill": "$text-secondary",
+                          "content": "Sabados laborables",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
                         }
                       ]
                     }
@@ -13037,7 +13092,6 @@
               "id": "T8rV8",
               "name": "Vacation Tracker",
               "width": "fill_container",
-              "height": 56,
               "fill": "$bg-card",
               "cornerRadius": 10,
               "stroke": {
@@ -13045,52 +13099,109 @@
                 "thickness": 1,
                 "fill": "$border"
               },
+              "layout": "vertical",
+              "gap": 10,
               "padding": [
                 12,
                 16
               ],
               "justifyContent": "space_between",
-              "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
-                  "id": "5BlUX",
-                  "name": "mtleft",
-                  "layout": "vertical",
-                  "gap": 2,
+                  "id": "LliaX",
+                  "name": "mtTopRow",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "jR9no",
-                      "name": "mtl1",
-                      "fill": "$text-secondary",
-                      "content": "Vacaciones restantes",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
+                      "type": "frame",
+                      "id": "5BlUX",
+                      "name": "mtleft",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jR9no",
+                          "name": "mtl1",
+                          "fill": "$text-secondary",
+                          "content": "Vacaciones restantes",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "3MifI",
+                          "name": "mtl2",
+                          "gap": 4,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "advoT",
+                              "name": "mtprog",
+                              "width": 120,
+                              "height": 4,
+                              "fill": "$border",
+                              "cornerRadius": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "yIVq6",
+                              "name": "mtpbar",
+                              "fill": "$text-muted",
+                              "content": "0 / 22",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       "type": "frame",
-                      "id": "3MifI",
-                      "name": "mtl2",
+                      "id": "C8d50",
+                      "name": "mtright",
                       "gap": 4,
-                      "alignItems": "center",
                       "children": [
                         {
                           "type": "frame",
-                          "id": "advoT",
-                          "name": "mtprog",
-                          "width": 120,
-                          "height": 4,
-                          "fill": "$border",
-                          "cornerRadius": 2
+                          "id": "UKgqV",
+                          "name": "input",
+                          "width": 48,
+                          "height": 28,
+                          "fill": "#FAFAFA",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "$border"
+                          },
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Dwgmh",
+                              "name": "inputVal",
+                              "fill": "$text-primary",
+                              "content": "22",
+                              "fontFamily": "Space Grotesk",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            }
+                          ]
                         },
                         {
                           "type": "text",
-                          "id": "yIVq6",
-                          "name": "mtpbar",
-                          "fill": "$text-muted",
-                          "content": "0 / 22",
+                          "id": "y6noP",
+                          "name": "mtru",
+                          "fill": "$text-secondary",
+                          "content": "dias",
                           "fontFamily": "Inter",
                           "fontSize": 11,
                           "fontWeight": "normal"
@@ -13101,44 +13212,45 @@
                 },
                 {
                   "type": "frame",
-                  "id": "C8d50",
-                  "name": "mtright",
-                  "gap": 4,
+                  "id": "3UA0s",
+                  "name": "mtCheckRow",
+                  "gap": 6,
+                  "alignItems": "center",
                   "children": [
                     {
                       "type": "frame",
-                      "id": "UKgqV",
-                      "name": "input",
-                      "width": 48,
-                      "height": 28,
-                      "fill": "#FAFAFA",
-                      "cornerRadius": 6,
+                      "id": "pzohk",
+                      "name": "mCheckbox",
+                      "width": 16,
+                      "height": 16,
+                      "fill": "$text-muted",
+                      "cornerRadius": 3,
                       "stroke": {
                         "align": "inside",
-                        "thickness": 1,
-                        "fill": "$border"
+                        "thickness": 1.5,
+                        "fill": "$text-muted"
                       },
                       "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "Dwgmh",
-                          "name": "inputVal",
-                          "fill": "$text-primary",
-                          "content": "22",
-                          "fontFamily": "Space Grotesk",
-                          "fontSize": 16,
-                          "fontWeight": "600"
+                          "type": "icon_font",
+                          "id": "kTKzO",
+                          "name": "checkIcon2",
+                          "width": 10,
+                          "height": 10,
+                          "iconFontName": "check",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
                         }
                       ]
                     },
                     {
                       "type": "text",
-                      "id": "y6noP",
-                      "name": "mtru",
+                      "id": "gt1xj",
+                      "name": "checkLabel2",
                       "fill": "$text-secondary",
-                      "content": "dias",
+                      "content": "Sabados laborables",
                       "fontFamily": "Inter",
                       "fontSize": 11,
                       "fontWeight": "normal"
