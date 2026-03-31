@@ -57,6 +57,14 @@ app.get('/api/load/:id', (req, res) => {
   res.json({ data: JSON.parse(row.data) });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+// Passenger (Plesk) expects the app to listen on 'passenger' or be exported
+if (typeof(PhusionPassenger) !== 'undefined') {
+  PhusionPassenger.configure({ autoInstall: false });
+  app.listen('passenger', () => {
+    console.log('Servidor corriendo con Passenger');
+  });
+} else {
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+}
